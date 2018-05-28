@@ -226,5 +226,71 @@ let countingSort = (arr, maxValue) => {
     return arr;
 }
 
+/* 桶排序 */
+let bucketSort = (arr, bucketSize) => {
+    if (arr.length === 0) return arr;
 
+    let i;
+    let minValue = arr[0],
+    	maxValue = arr[0];
 
+    for (i = 1; i < arr.length; i++) {
+   	    if (arr[i] < minValue) {
+        	minValue = arr[i]; // 输入数据的最小值
+      	} else if (arr[i] > maxValue) {
+        	maxValue = arr[i]; // 输入数据的最大值
+        }
+    }
+
+    // 桶的初始化
+    let DEFAULT_BUCKET_SIZE = 5;  // 设置桶的默认数量为5
+    bucketSize = bucketSize || DEFAULT_BUCKET_SIZE;
+    let bucketCount = Math.floor((maxValue - minValue) / bucketSize) + 1,
+    	buckets = new Array(bucketCount);
+    for (i = 0; i < buckets.length; i++) {
+        buckets[i] = [];
+    }
+
+    //利用映射函数将数据分配到各个桶中
+    for (i = 0; i < arr.length; i++) {
+        buckets[Math.floor((arr[i] - minValue) / bucketSize)].push(arr[i]);
+    }
+
+    arr.length = 0;
+    for (i = 0; i < buckets.length; i++) {
+        insertionSort(buckets[i]);  // 对每个桶进行排序，这里使用了插入排序
+        for (var j = 0; j < buckets[i].length; j++) {
+            arr.push(buckets[i][j]);                      
+        }
+    }
+
+    return arr;
+}
+
+/* 基数排序 */
+;(function () {
+	// LSD Radix Sort
+	let counter = [];
+	let radixSort = (arr, maxDigit) => {
+	    let mod = 10,
+	    	dev = 1;
+	    for (let i = 0; i < maxDigit; i++, dev *= 10, mod *= 10) {
+	        for(let j = 0; j < arr.length; j++) {
+	            let bucket = parseInt((arr[j] % mod) / dev);
+	            if (counter[bucket] == null) counter[bucket] = [];
+	            counter[bucket].push(arr[j]);
+	        }
+
+	        let pos = 0;
+	        for(let j = 0; j < counter.length; j++) {
+	            let value = null;
+	            if (counter[j] != null) {
+	                while ((value = counter[j].shift()) != null) {
+	                    arr[pos++] = value;
+	                }
+	            }
+	        }
+	    }
+	    return arr;
+	}
+})()
