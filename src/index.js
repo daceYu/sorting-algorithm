@@ -91,12 +91,13 @@ let mergeSort = (arr) => {
 
 	let middle = Math.floor(len / 2),
 		left = arr.slice(0, middle),
-		right = arr.slice(middle);
+		right = arr.slice(middle); // 分区间
 
 	let merge = (left, right) => {
 		let result = [];
 
-		while (left.length && right.length) {
+		while (left.length && right.length) { // 两个区间都有值
+			// 区间元素作比较，小的放在前面
 			if (left[0] <= right[0]) {
 				result.push(left.shift());
 			} else {
@@ -104,6 +105,7 @@ let mergeSort = (arr) => {
 			}
 		}
 
+		// 只有一个区间
 		while (left.length) result.push(left.shift());
 		while (right.length) result.push(right.shift());
 
@@ -113,5 +115,116 @@ let mergeSort = (arr) => {
 	return merge(mergeSort(left), mergeSort(right));
 }
 
-/* 快排 */
+/**
+ * 快排
+ * @param {Array}  arr   : 需要排序的数组对象
+ * @param {Number} left  : 分区以后左边的元素个数
+ * @param {Number} right : 分区以后右边的元素个数
+ */
+let quickSort = (arr, left, right) => {
+	let len = arr.length,
+		partitionIndex,
+		left = typeof left != "number" ? 0 : left,
+		right = typeof right != "number" ? len - 1 : right;
+
+	// 位置互换
+	let swap = (arr, i, j) => {
+		let temp = arr[i];
+		arr[i] = arr[j];
+		arr[j] = temp;
+	}
+
+	// 分区操作
+	let partition = (arr, left, right) => {
+		let pivot = left, // 设定基准值
+			index = pivot + 1;
+
+		for (let i = index; i <= right; i++) {
+			if (arr[i] < arr[pivot]) {
+				swap(arr, i, index);
+				index++;
+			}
+		}
+
+		swap(arr, pivot, index - 1);
+		return index - 1;
+	}
+
+	if (left < right) {
+		partitionIndex = partition(arr, left, right);
+		quickSort(arr, left, partitionIndex - 1);
+		quickSort(arr, partitionIndex + 1; right);	
+	}
+	return arr;
+}
+
+/* 堆排序 */
+;(function () {
+	let len;    //因为声明的多个函数都需要数据长度，所以把len设置成为全局变量
+	let buildMaxHeap = (arr) => {   //建立大顶堆
+	    len = arr.length;
+	    for (let i = Math.floor(len / 2); i >= 0; i--) {
+	        heapify(arr, i);
+	    }
+	}
+
+	let heapify = (arr, i) => {     //堆调整
+	    let left = 2 * i + 1,
+	        right = 2 * i + 2,
+	        largest = i;
+	    if (left < len && arr[left] > arr[largest]) {
+	        largest = left;
+	    }
+
+	    if (right < len && arr[right] > arr[largest]) {
+	        largest = right;
+	    }
+
+	    if (largest != i) {
+	        swap(arr, i, largest);
+	        heapify(arr, largest);
+	    }
+	}
+
+	let swap = (arr, i, j) => {
+	    let temp = arr[i];
+	    arr[i] = arr[j];
+	    arr[j] = temp;
+	}
+
+	let heapSort = (arr) => {
+	    buildMaxHeap(arr);
+	    for (let i = arr.length - 1; i > 0; i--) {
+	        swap(arr, 0, i);
+	        len--;
+	        heapify(arr, 0);
+	    }
+	    return arr;
+	}
+})()
+
+/* 计数排序 */
+let countingSort = (arr, maxValue) => {
+    let bucket = new Array(maxValue + 1),
+        sortedIndex = 0,
+        arrLen = arr.length,
+        bucketLen = maxValue + 1;
+    
+    for (let i = 0; i < arrLen; i++) {
+        if (!bucket[arr[i]]) {
+            bucket[arr[i]] = 0;
+        }
+        bucket[arr[i]]++;
+    }
+
+    for (let j = 0; j < bucketLen; j++) {
+        while (bucket[j] > 0) {
+            arr[sortedIndex++] = j;
+            bucket[j]--;
+        }
+    }
+    return arr;
+}
+
+
 

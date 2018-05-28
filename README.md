@@ -4,7 +4,7 @@
 
 ### 简述
 
-​	虽然说我是软工出身的，但是对于算法这一块比较薄弱，以前一直以为，前端工程师并不需要过多深入学习算法，在工作过程中，很快就知道这个观念是错误的，现在的我坚信一句话：学习某一个东西一定是会有帮助的，如果觉得这个东西对你帮助不大，那么可能说是你自身没有达到这个高度。
+虽然说我是软工出身的，但是对于算法这一块比较薄弱，以前一直以为，前端工程师并不需要过多深入学习算法，在工作过程中，很快就知道这个观念是错误的，现在的我坚信一句话：学习某一个东西一定是会有帮助的，如果觉得这个东西对你帮助不大，那么可能说是你自身没有达到这个高度。
 
 ### 时间复杂度
 
@@ -64,7 +64,7 @@ let bubbleSort = (arr) => {
 }
 ```
 
-##### 流程图解
+##### 动图演示
 
 ![images](./resource/1.gif)
 
@@ -95,7 +95,7 @@ let selectionSort = (arr) => {
 }
 ```
 
-##### 流程图解
+##### 动图演示
 
 ![images](./resource/2.gif)
 
@@ -126,7 +126,7 @@ let insertionSort = (arr) => {
 }
 ```
 
-##### 流程图解
+##### 动图演示
 
 ![images](./resource/3.gif)
 
@@ -199,7 +199,7 @@ let mergeSort = (arr) => {
 }
 ```
 
-##### 流程图解
+##### 动图演示
 
 ![images](./resource/4.gif)
 
@@ -209,13 +209,147 @@ let mergeSort = (arr) => {
 
 快速排序的名字起的是简单粗暴，因为一听到这个名字你就知道它存在的意义，就是快，而且效率高! 它是处理大数据最快的排序算法之一了。
 
+> 快速排序的最坏运行情况是O($n^2$)，比如说顺序数列的快排。但它的平摊期望时间是O($nlog_2n$) ，且O($nlog_2n$)记号中隐含的常数因子很小，比复杂度稳定等于O($nlog_2n$)的归并排序要小很多。所以，对绝大多数顺序性较弱的随机数列而言，快速排序总是优于归并排序。
+
 [快排为什么快?](https://blog.csdn.net/yzllz001/article/details/50982841)
 
+##### 代码实现
 
+```js
+let quickSort = (arr, left, right) => {
+	let len = arr.length,
+		partitionIndex,
+		left = typeof left != "number" ? 0 : left,
+		right = typeof right != "number" ? len - 1 : right;
+
+	// 位置互换
+	let swap = (arr, i, j) => {
+		let temp = arr[i];
+		arr[i] = arr[j];
+		arr[j] = temp;
+	}
+
+	// 分区操作
+	let partition = (arr, left, right) => {
+		let pivot = left, // 设定基准值
+			index = pivot + 1;
+
+		for (let i = index; i <= right; i++) {
+			if (arr[i] < arr[pivot]) {
+				swap(arr, i, index);
+				index++;
+			}
+		}
+
+		swap(arr, pivot, index - 1);
+		return index - 1;
+	}
+
+	if (left < right) {
+		partitionIndex = partition(arr, left, right);
+		quickSort(arr, left, partitionIndex - 1);
+		quickSort(arr, partitionIndex + 1; right);	
+	}
+	return arr;
+}
+```
+
+##### 动图演示
+
+![imagse](./resource/5.gif)
 
 #### 堆排序
 
+堆排序可以说是一种利用堆的概念来排序的选择排序。分为两种方法：
+
+1. 大顶堆：每个节点的值都大于或等于其子节点的值，在堆排序算法中用于升序排列
+2. 小顶堆：每个节点的值都小于或等于其子节点的值，在堆排序算法中用于降序排列
+
+##### 代码实现
+
+```js
+;(function () {
+	let len;    //因为声明的多个函数都需要数据长度，所以把len设置成为全局变量
+	let buildMaxHeap = (arr) => {   //建立大顶堆
+	    len = arr.length;
+	    for (let i = Math.floor(len / 2); i >= 0; i--) {
+	        heapify(arr, i);
+	    }
+	}
+
+	let heapify = (arr, i) => {     //堆调整
+	    let left = 2 * i + 1,
+	        right = 2 * i + 2,
+	        largest = i;
+	    if (left < len && arr[left] > arr[largest]) {
+	        largest = left;
+	    }
+
+	    if (right < len && arr[right] > arr[largest]) {
+	        largest = right;
+	    }
+
+	    if (largest != i) {
+	        swap(arr, i, largest);
+	        heapify(arr, largest);
+	    }
+	}
+
+	let swap = (arr, i, j) => {
+	    let temp = arr[i];
+	    arr[i] = arr[j];
+	    arr[j] = temp;
+	}
+
+	let heapSort = (arr) => {
+	    buildMaxHeap(arr);
+	    for (let i = arr.length - 1; i > 0; i--) {
+	        swap(arr, 0, i);
+	        len--;
+	        heapify(arr, 0);
+	    }
+	    return arr;
+	}
+})()
+```
+
+##### 动图演示
+
+![images](./resource/6.gif)
+
 #### 计数排序
+
+计数排序的核心在于将输入的数据值转化为键存储在额外开辟的数组空间中。作为一种线性时间复杂度的排序，计数排序要求输入的数据必须是有确定范围的整数。
+
+##### 代码实现
+
+```
+let countingSort = (arr, maxValue) => {
+    let bucket = new Array(maxValue + 1),
+        sortedIndex = 0,
+        arrLen = arr.length,
+        bucketLen = maxValue + 1;
+    
+    for (let i = 0; i < arrLen; i++) {
+        if (!bucket[arr[i]]) {
+            bucket[arr[i]] = 0;
+        }
+        bucket[arr[i]]++;
+    }
+
+    for (let j = 0; j < bucketLen; j++) {
+        while (bucket[j] > 0) {
+            arr[sortedIndex++] = j;
+            bucket[j]--;
+        }
+    }
+    return arr;
+}
+```
+
+##### 动图演示
+
+![imagse](./resource/7.gif)
 
 #### 桶排序
 
